@@ -222,12 +222,16 @@ export default function MobileLayout() {
     setIsSubmitting(true);
     setStatus("");
 
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
     emailjs
       .sendForm(
-        "service_a1v2v4s",
-        "template_slv0ynd",
+        serviceId,
+        templateId,
         form.current,
-        "tZ3QujCZvJMY9siC9"
+        publicKey
       )
       .then(
         () => {

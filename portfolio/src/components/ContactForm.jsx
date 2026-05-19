@@ -12,8 +12,11 @@ export default function ContactForm() {
     setIsSubmitting(true);
     setStatus("");
 
-    // NOTE: Replace these with your actual EmailJS credentials from https://emailjs.com/
-    emailjs.sendForm('service_a1v2v4s', 'template_slv0ynd', form.current, 'tZ3QujCZvJMY9siC9')
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    emailjs.sendForm(serviceId, templateId, form.current, publicKey)
       .then(() => {
           setStatus("success");
           form.current.reset();
