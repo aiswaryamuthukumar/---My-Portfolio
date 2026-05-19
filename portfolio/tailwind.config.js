@@ -1,24 +1,25 @@
-﻿export default {
+export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
       fontFamily: {
         sans: ['Poppins', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
       },
       colors: {
-        primary: '#FF004F',
-        accent: '#C3073F',
-        surface: '#111114',
-        section: '#0B0B0F',
-        background: '#050505',
-        muted: '#B8B8B8',
+        primary: '#E8B4AA',
+        accent: '#D89A8F',
+        surface: '#09111A',
+        section: '#04070D',
+        background: '#04070D',
+        muted: '#AFAFAF',
       },
       boxShadow: {
-        glow: '0 0 80px rgba(255,0,79,0.16)',
+        glow: '0 0 80px rgba(216, 154, 143, 0.12)',
         soft: '0 18px 80px rgba(0,0,0,0.35)',
       },
       backgroundImage: {
-        'hero-glow': 'radial-gradient(circle at right, rgba(255,0,79,0.16), transparent 34%)',
+        'hero-glow': 'radial-gradient(circle at right, rgba(216, 154, 143, 0.12), transparent 34%)',
       },
     },
   },

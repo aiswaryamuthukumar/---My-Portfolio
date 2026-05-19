@@ -18,12 +18,19 @@ export default function Contact() {
             {/* Text and Socials on the Left */}
             <div className="text-center lg:text-left">
               <h2 className="font-black leading-none tracking-tight">
-                <span className="text-[#ff004f] block uppercase text-sm md:text-lg tracking-[0.25em] mb-3 font-bold">Let's</span>
-                <span className="text-white block uppercase text-6xl md:text-7xl lg:text-8xl">
-                  Connect<span className="text-[#ff004f]">.</span>
+                <span className="text-[#D89A8F] block uppercase text-sm md:text-lg tracking-[0.25em] mb-3 font-bold">Let's</span>
+                <span className="text-white block uppercase text-5xl md:text-6xl lg:text-7xl">
+                  Connect<span className="text-[#D89A8F]">.</span>
                 </span>
               </h2>
-              <p className="contact-copy mt-8 text-[17px] leading-8 text-white/90 max-w-md mx-auto lg:mx-0">
+              <motion.div
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+                className="mt-6 h-[2px] w-12 bg-[#D89A8F] mx-auto lg:mx-0"
+              />
+              <p className="contact-copy mt-8 text-[17px] leading-8 text-[#F8F7F4] max-w-md mx-auto lg:mx-0">
                 I'm currently looking for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
               </p>
             </div>

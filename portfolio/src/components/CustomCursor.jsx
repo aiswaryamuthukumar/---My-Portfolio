@@ -14,12 +14,12 @@ export default function CustomCursor() {
 
     const handleMouseOver = (e) => {
       // Check if hovering over clickable elements
-      const isClickable = 
+      const isClickable =
         e.target.tagName.toLowerCase() === "a" ||
         e.target.tagName.toLowerCase() === "button" ||
         e.target.closest("a") ||
         e.target.closest("button");
-        
+
       setIsHovering(!!isClickable);
     };
 
@@ -48,7 +48,7 @@ export default function CustomCursor() {
     <>
       {/* Main small dot (follows instantly) */}
       <motion.div
-        className="fixed top-0 left-0 w-2.5 h-2.5 bg-[#ff004f] rounded-full pointer-events-none z-[9999] mix-blend-screen"
+        className="fixed top-0 left-0 w-2.5 h-2.5 bg-[#D89A8F] rounded-full pointer-events-none z-[9999] mix-blend-screen"
         animate={{
           x: mousePosition.x - 5,
           y: mousePosition.y - 5,
@@ -57,17 +57,17 @@ export default function CustomCursor() {
         }}
         transition={{ type: "tween", ease: "backOut", duration: 0.1 }}
       />
-      
+
       {/* Trailing larger circle (springs behind) */}
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 border-[1.5px] border-[#ff004f]/60 rounded-full pointer-events-none z-[9998]"
+        className="fixed top-0 left-0 w-8 h-8 border-[1.5px] border-[#D89A8F]/60 rounded-full pointer-events-none z-[9998]"
         animate={{
           x: mousePosition.x - 16,
           y: mousePosition.y - 16,
           opacity: isVisible ? 1 : 0,
           scale: isHovering ? 1.8 : 1,
-          backgroundColor: isHovering ? "rgba(255, 0, 79, 0.15)" : "transparent",
-          borderColor: isHovering ? "rgba(255, 0, 79, 0)" : "rgba(255, 0, 79, 0.6)",
+          backgroundColor: isHovering ? "rgba(216, 154, 143, 0.15)" : "transparent",
+          borderColor: isHovering ? "rgba(216, 154, 143, 0)" : "rgba(216, 154, 143, 0.6)",
         }}
         transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.6 }}
       />

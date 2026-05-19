@@ -34,7 +34,7 @@ const cards = [
   },
   {
     title: "Team IdeaFor",
-    members: ["Prabanjan M","Aditi Baskaran", "Poovendhiran VS"],
+    description: "Not just Shotlisted mail but first Step of our journey",
     image: "/images/hackathon7.jpeg",
     isTeamCard: true,
   },
@@ -156,14 +156,24 @@ export default function HackathonCarousel() {
                 </div>
               </div>
               <div className="hack-content">
-                <h3>{card.title}</h3>
+                {isActive ? (
+                  <div className="flex items-center justify-center gap-3 w-full mb-4 mt-2">
+                    <div className="h-[1px] flex-grow bg-gradient-to-r from-transparent to-[#E8B4AA]/60"></div>
+                    <h3 className="font-serif text-[24px] md:text-[28px] text-[#FFFFFF] font-medium tracking-wide text-center mx-1 leading-snug" style={{ textShadow: '0 0 20px rgba(232, 180, 170, 0.8), 0 0 10px rgba(232, 180, 170, 0.4)' }}>
+                      {card.title}
+                    </h3>
+                    <div className="h-[1px] flex-grow bg-gradient-to-l from-transparent to-[#E8B4AA]/60"></div>
+                  </div>
+                ) : (
+                  <h3 className="text-lg font-semibold text-[#F8F7F4]">{card.title}</h3>
+                )}
                 {card.description && !card.isTeamCard && (
-                  <p className="mt-2 text-xs leading-5 text-white/82">{card.description}</p>
+                  <p className={`text-xs leading-5 ${isActive ? 'text-[#D8D8D8] mt-1 text-center font-medium text-[13.5px]' : 'text-[#AFAFAF] mt-2'}`}>{card.description}</p>
                 )}
                 {card.members && card.isTeamCard && (
                   <div className="mt-3 space-y-1">
                     {card.members.map((member) => (
-                      <p key={member} className="text-xs font-medium leading-5 text-white/95">
+                      <p key={member} className="text-xs font-medium leading-5 text-[#FFFFFF]">
                         {member}
                       </p>
                     ))}
@@ -192,6 +202,6 @@ export default function HackathonCarousel() {
           />
         ))}
       </div>
-    </motion.div>
+    </motion.div >
   );
 }

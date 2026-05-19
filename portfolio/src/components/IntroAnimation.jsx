@@ -2,14 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MAX_POSSIBLE_FRAMES = 300;
-const FPS = 30; 
+const FPS = 50; // Increased from 30 to make the animation play faster
 
-const IntroAnimation = ({ onComplete }) => {
+const IntroAnimation = ({ onComplete, onRevealStart }) => {
   const canvasRef = useRef(null);
   const [images, setImages] = useState([]);
   const [loadedCount, setLoadedCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [phase, setPhase] = useState(0); 
+  const [phase, setPhase] = useState(0);
   const [showText, setShowText] = useState(false);
   const totalFramesRef = useRef(MAX_POSSIBLE_FRAMES);
   const textShownRef = useRef(false);
@@ -31,7 +31,7 @@ const IntroAnimation = ({ onComplete }) => {
       const img = new Image();
       const frameNumber = i.toString().padStart(3, '0');
       img.src = `/images/ezgif-frame-${frameNumber}.jpg`;
-      
+
       img.onload = () => {
         if (hasError && i > detectedTotal) return;
         currentLoaded++;
@@ -39,7 +39,7 @@ const IntroAnimation = ({ onComplete }) => {
         imgArray[i - 1] = img;
         checkReady();
       };
-      
+
       img.onerror = () => {
         if (!hasError) {
           hasError = true;
@@ -49,7 +49,7 @@ const IntroAnimation = ({ onComplete }) => {
         }
       };
     }
-    
+
     const fallbackTimer = setTimeout(() => {
       if (!isPlaying && currentLoaded > 10) {
         totalFramesRef.current = currentLoaded;
@@ -57,7 +57,7 @@ const IntroAnimation = ({ onComplete }) => {
         setIsPlaying(true);
       }
     }, 4000);
-    
+
     return () => clearTimeout(fallbackTimer);
   }, [isPlaying]);
 
@@ -67,7 +67,7 @@ const IntroAnimation = ({ onComplete }) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
+
     let currentFrame = 0;
     let animationFrameId;
     let lastTime = 0;
@@ -82,29 +82,29 @@ const IntroAnimation = ({ onComplete }) => {
         const vRatio = ch / img.height;
         const ratio = Math.max(hRatio, vRatio);
         const centerShift_x = (cw - img.width * ratio) / 2;
-        const centerShift_y = (ch - img.height * ratio) / 2;  
-        
+        const centerShift_y = (ch - img.height * ratio) / 2;
+
         ctx.clearRect(0, 0, cw, ch);
         ctx.drawImage(img, 0, 0, img.width, img.height,
-                           centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);  
+          centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
       }
       currentFrame++;
     };
 
     const drawLoop = (currentTime) => {
-      // Trigger the text reveal near the end of the sequence (approx last 1.5 seconds / 45 frames)
-      if (currentFrame >= totalFramesRef.current - 45 && !textShownRef.current) {
+      // Trigger the text reveal near the end of the sequence
+      if (currentFrame >= totalFramesRef.current - 40 && !textShownRef.current) {
         textShownRef.current = true;
         setShowText(true);
       }
 
       if (currentFrame >= totalFramesRef.current) {
-        setTimeout(() => setPhase(1), 2500); // Give 2.5s to read before fading out
+        setTimeout(() => setPhase(1), 800); // Give 0.8s to read before fading out (down from 2.5s)
         return;
       }
 
       animationFrameId = requestAnimationFrame(drawLoop);
-      
+
       if (!lastTime) lastTime = currentTime;
       const delta = currentTime - lastTime;
 
@@ -121,10 +121,11 @@ const IntroAnimation = ({ onComplete }) => {
 
   useEffect(() => {
     if (phase === 1) {
-      const timer = setTimeout(onComplete, 1200);
+      if (onRevealStart) onRevealStart();
+      const timer = setTimeout(onComplete, 1500); // Wait for crossfade
       return () => clearTimeout(timer);
     }
-  }, [phase, onComplete]);
+  }, [phase, onComplete, onRevealStart]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -137,7 +138,7 @@ const IntroAnimation = ({ onComplete }) => {
         canvas.style.height = `${window.innerHeight}px`;
       }
     };
-    
+
     updateSize();
     window.addEventListener('resize', updateSize);
     return () => window.removeEventListener('resize', updateSize);
@@ -155,18 +156,18 @@ const IntroAnimation = ({ onComplete }) => {
   return (
     <AnimatePresence>
       {phase === 0 && (
-        <motion.div 
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.2, ease: "easeInOut" }}
-          className="fixed inset-0 z-[100] bg-[#050B14] flex items-center justify-center overflow-hidden"
+        <motion.div
+          initial={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          exit={{ opacity: 0, scale: 1.15, filter: "blur(12px)" }}
+          transition={{ duration: 1.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="fixed inset-0 z-[100] bg-[#04070D] flex items-center justify-center overflow-hidden"
         >
           {/* Subtle Ambient Lighting Overlay */}
           <div className="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))] from-[#FFB6A3]/10 via-transparent to-transparent mix-blend-screen" />
-          
+
           {/* Canvas for Sequence */}
-          <canvas 
-            ref={canvasRef} 
+          <canvas
+            ref={canvasRef}
             className={`w-full h-full object-cover z-0 transition-opacity duration-1000 ${isPlaying ? 'opacity-100' : 'opacity-0'}`}
           />
 
@@ -210,22 +211,139 @@ const IntroAnimation = ({ onComplete }) => {
           <AnimatePresence>
             {showText && (
               <motion.div
-                initial={{ opacity: 0, x: -40, filter: "blur(8px)" }}
-                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, x: -20, filter: "blur(4px)" }}
-                transition={{ duration: 1.5, ease: "easeOut" }}
-                className="absolute left-[8%] md:left-[12%] top-[40%] md:top-[45%] z-20 max-w-xs md:max-w-md pointer-events-none"
+                initial={{ opacity: 0, x: -20, y: 15, filter: "blur(10px)" }}
+                animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, x: -10, filter: "blur(5px)" }}
+                transition={{ duration: 1.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="absolute left-[6%] md:left-[8%] top-[20%] md:top-[25%] z-20 pointer-events-none"
               >
-                <h2 
-                  className="text-4xl md:text-5xl lg:text-6xl text-[#FFB6A3] drop-shadow-[0_0_20px_rgba(255,182,163,0.3)] leading-snug italic" 
-                  style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', 'Georgia', serif", fontWeight: 400, letterSpacing: "0.05em" }}
+                {/* Floating heart top-left */}
+                <motion.span
+                  className="absolute -top-6 -left-2 text-[#C9877B] text-xl opacity-80"
+                  animate={{ y: [-4, 4, -4] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                >♡</motion.span>
+
+                {/* Serif line: "Excited to" */}
+                <div
+                  className="leading-[1.05] tracking-tight"
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontStyle: "italic",
+                    fontSize: "clamp(3rem, 8vw, 7rem)",
+                    fontWeight: 500,
+                    background: "linear-gradient(135deg, #C9877B 0%, #D89A8F 40%, #E8B4AA 70%, #c07b72 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    filter: "drop-shadow(0 2px 18px rgba(216, 154, 143, 0.35))",
+                  }}
                 >
-                  Excited to know about me? ✨
-                </h2>
+                  Excited to
+                </div>
+
+                {/* Serif line: "know" — slightly larger */}
+                <div
+                  className="leading-[0.9] tracking-tight relative"
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontStyle: "italic",
+                    fontSize: "clamp(4rem, 11vw, 9.5rem)",
+                    fontWeight: 600,
+                    background: "linear-gradient(135deg, #b8726a 0%, #e0988e 40%, #E8B4AA 65%, #c07b72 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    filter: "drop-shadow(0 2px 22px rgba(216, 154, 143, 0.4))",
+                  }}
+                >
+                  know
+                  {/* Small tick mark near "know" */}
+                  <motion.span
+                    className="absolute top-2 -right-6 text-[#C9877B] text-2xl opacity-70"
+                    style={{ fontFamily: "sans-serif", fontStyle: "normal", WebkitTextFillColor: "#C9877B" }}
+                    animate={{ rotate: [-5, 5, -5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                  >✓</motion.span>
+                </div>
+
+                {/* Script/Cursive: "about me?" */}
+                <div className="relative mt-1 ml-4 md:ml-8">
+                  <div
+                    className="leading-none relative z-10"
+                    style={{
+                      fontFamily: "'Allura', cursive",
+                      fontSize: "clamp(3.5rem, 9.5vw, 8.5rem)",
+                      fontWeight: 400,
+                      background: "linear-gradient(135deg, #C9877B 0%, #D89A8F 50%, #f3d0cc 80%, #c07b72 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      filter: "drop-shadow(0 2px 16px rgba(216, 154, 143, 0.45))",
+                    }}
+                  >
+                    about me?
+                  </div>
+
+                  {/* Brushstroke underline SVG */}
+                  <svg
+                    viewBox="0 0 340 28"
+                    className="w-full max-w-[360px] md:max-w-[480px] mt-[-6px] opacity-80"
+                    preserveAspectRatio="none"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <motion.path
+                      d="M4 18 Q60 8 120 16 Q180 24 240 14 Q290 6 338 18"
+                      stroke="url(#brushGrad)"
+                      strokeWidth="5"
+                      strokeLinecap="round"
+                      fill="none"
+                      initial={{ pathLength: 0, opacity: 0 }}
+                      animate={{ pathLength: 1, opacity: 1 }}
+                      transition={{ duration: 1.2, delay: 0.6, ease: "easeOut" }}
+                    />
+                    <defs>
+                      <linearGradient id="brushGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#b87068" />
+                        <stop offset="50%" stopColor="#e0988e" />
+                        <stop offset="100%" stopColor="#C9877B" stopOpacity="0.4" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+
+                  {/* Sparkle near "about me?" */}
+                  <motion.span
+                    className="absolute -right-4 md:-right-8 top-2 text-[#d4917e] text-2xl md:text-3xl"
+                    style={{ WebkitTextFillColor: "#d4917e" }}
+                    animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  >✦</motion.span>
+                  <motion.span
+                    className="absolute -right-10 md:-right-16 top-8 text-[#C9877B] text-sm"
+                    style={{ WebkitTextFillColor: "#C9877B" }}
+                    animate={{ scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                  >✦</motion.span>
+                </div>
+
+                {/* Floating heart bottom-right */}
+                <motion.span
+                  className="absolute -bottom-4 right-8 text-[#C9877B] text-base opacity-70"
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
+                >♡</motion.span>
+
+                {/* Floating heart mid-right */}
+                <motion.span
+                  className="absolute top-12 right-0 text-[#C9877B] text-xs opacity-60"
+                  animate={{ y: [-3, 3, -3] }}
+                  transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
+                >♡</motion.span>
               </motion.div>
             )}
           </AnimatePresence>
-          
+
         </motion.div>
       )}
     </AnimatePresence>
