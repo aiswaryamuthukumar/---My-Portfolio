@@ -42,7 +42,7 @@ export default function About() {
           <motion.h2 
             initial={{ opacity: 0, y: 18 }} 
             whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true }} 
+            viewport={{ once: false }} 
             transition={{ duration: 0.65, ease: "easeOut" }} 
             className="text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-wider"
           >
@@ -51,14 +51,14 @@ export default function About() {
           <motion.div 
             initial={{ scaleX: 0 }} 
             whileInView={{ scaleX: 1 }} 
-            viewport={{ once: true }} 
+            viewport={{ once: false }} 
             transition={{ duration: 0.55, ease: "easeOut" }} 
             className="mt-4 h-[2px] w-12 bg-[#ff004f]" 
           />
           <motion.div 
             initial={{ opacity: 0, y: 15 }} 
             whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true }} 
+            viewport={{ once: false }} 
             transition={{ duration: 0.65, ease: "easeOut", delay: 0.1 }}
             className="mt-8 text-[15px] leading-7 text-white/70 max-w-2xl mx-auto"
           >
@@ -70,7 +70,7 @@ export default function About() {
           className="grid gap-6 lg:grid-cols-2" 
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.2 }}
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.15 } } }}
         >
           {education.map((item) => (

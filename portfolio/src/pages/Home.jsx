@@ -16,9 +16,9 @@ const heroItem = {
 
 export default function Home() {
   return (
-    <section id="home" className="hero-section px-5 pb-4 pt-3 sm:px-8 lg:px-12">
+    <section id="home" className="hero-section px-5 pb-3 pt-1 sm:px-8 lg:px-12">
       <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1fr_0.92fr]">
-        <motion.div variants={heroGroup} initial="hidden" animate="show">
+        <motion.div variants={heroGroup} initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.1 }}>
           <motion.div variants={heroItem} className="mb-5 flex items-center gap-4">
             <div className="flex items-center">
               <div className="w-1.5 h-1.5 rounded-full bg-[#ff004f]"></div>
@@ -54,12 +54,12 @@ export default function Home() {
             </div>
           </motion.div>
 
-          <motion.div variants={heroItem} className="mt-10 flex items-start gap-3">
-            <span className="text-4xl font-black leading-none text-[#ff004f] font-serif">"</span>
-            <p className="text-[17px] text-[#e2e8f0] italic pt-1 font-light">
+          <motion.div variants={heroItem} className="mt-10 flex items-center gap-3">
+            <span className="text-4xl font-black leading-none text-[#ff004f] font-serif translate-y-1">"</span>
+            <p className="text-[17px] text-[#e2e8f0] italic font-light">
               Turning Ideas Into Projects with Messy Bun
             </p>
-            <span className="text-4xl font-black leading-none text-[#ff004f] font-serif self-end translate-y-3">"</span>
+            <span className="text-4xl font-black leading-none text-[#ff004f] font-serif translate-y-1">"</span>
           </motion.div>
 
           <motion.div variants={heroItem} className="mt-8 h-[1px] w-full max-w-md bg-gradient-to-r from-[#ff004f]/40 to-transparent" />
@@ -77,12 +77,13 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
-        <motion.div
-          className="relative mx-auto w-full max-w-[500px] lg:ml-auto"
-          initial={{ opacity: 0, y: 28, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.9, ease: "easeOut", delay: 0.25 }}
-        >
+          <motion.div
+            className="relative mx-auto w-full max-w-[500px] lg:ml-auto"
+            initial={{ opacity: 0, y: 28, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, amount: 0.1 }}
+            transition={{ duration: 0.9, ease: "easeOut", delay: 0.25 }}
+          >
           <div className="relative rounded-[2rem] border-[1.5px] border-[#ff004f] p-1 bg-[#0a0a0c]">
             <img
               src="/images/profile.jpeg"

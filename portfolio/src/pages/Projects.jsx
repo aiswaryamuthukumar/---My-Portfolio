@@ -30,7 +30,7 @@ export default function Projects() {
         className="mx-auto max-w-7xl"
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ once: false, amount: 0.2 }}
         variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12 } } }}
       >
         <div className="flex flex-col items-center mb-16 text-center">

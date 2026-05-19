@@ -11,6 +11,12 @@
 html, body {
   height: 100%;
   scroll-behavior: smooth;
+  cursor: none;
+}
+
+/* Hide cursor on interactive elements so custom cursor takes over completely */
+a, button, input, textarea, select, [role="button"] {
+  cursor: none !important;
 }
 
 /* ─── Cinematic scroll container ─── */
@@ -18,8 +24,7 @@ html, body {
   height: calc(100vh - 73px); /* subtract navbar height */
   overflow-y: scroll;
   overflow-x: hidden;
-  scroll-snap-type: y proximity;
-  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
   /* Hide scrollbar but keep functionality */
   scrollbar-width: thin;
   scrollbar-color: rgba(255,0,79,0.3) transparent;

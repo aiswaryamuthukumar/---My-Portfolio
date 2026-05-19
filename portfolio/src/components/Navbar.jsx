@@ -13,6 +13,7 @@ const navItems = [
 export default function Navbar() {
   const [achievementsOpen, setAchievementsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
     const container = document.querySelector(".cinematic-scroll") || window;
@@ -20,6 +21,28 @@ export default function Navbar() {
     handleScroll();
     container.addEventListener("scroll", handleScroll, { passive: true });
     return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Intersection Observer for active nav link
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      {
+        root: document.querySelector(".cinematic-scroll"),
+        rootMargin: "-40% 0px -40% 0px",
+      }
+    );
+
+    const sections = document.querySelectorAll("section[id]");
+    sections.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
   }, []);
 
   // Prevent scrolling when panel is open
@@ -49,17 +72,20 @@ export default function Navbar() {
           
           <div className="flex items-center gap-6 lg:gap-10">
             <nav className="hidden items-center gap-8 lg:gap-10 text-[13px] font-semibold text-white/90 md:flex">
-              {navItems.map((item) => (
-                <motion.a
-                  key={item.href}
-                  href={item.href}
-                  className={`nav-link hover:text-[#ff004f] transition-colors ${item.label === "Home" ? "text-[#ff004f]" : ""}`}
-                  whileHover={{ y: -2 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                >
-                  {item.label}
-                </motion.a>
-              ))}
+              {navItems.map((item) => {
+                const isActive = item.href === `#${activeSection}`;
+                return (
+                  <motion.a
+                    key={item.href}
+                    href={item.href}
+                    className={`nav-link hover:text-[#ff004f] transition-colors ${isActive ? "text-[#ff004f] active" : ""}`}
+                    whileHover={{ y: -2 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                  >
+                    {item.label}
+                  </motion.a>
+                );
+              })}
             </nav>
             
             <button
